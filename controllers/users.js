@@ -10,7 +10,6 @@ const getUsers = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line consistent-return
 const getUserById = async (req, res) => {
   const { userId } = req.params;
 
@@ -39,7 +38,6 @@ const createUser = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line consistent-return
 const updateUser = async (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
@@ -60,7 +58,7 @@ const updateUser = async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: 'Пользователь с указанным _id не найден' });
+      return res.status(404).json({ message: 'Пользователь с указанным ID не найден' });
     }
 
     res.status(200).json(updatedUser);
@@ -81,7 +79,7 @@ const updateAvatar = async (req, res) => {
     );
 
     if (!updatedUser) {
-      res.status(404).json({ message: 'Пользователь с указанным _id не найден' });
+      res.status(404).json({ message: 'Пользователь с указанным ID не найден' });
       return;
     }
 
@@ -91,6 +89,4 @@ const updateAvatar = async (req, res) => {
   }
 };
 
-module.exports = {
-  getUsers, getUserById, createUser, updateUser, updateAvatar,
-};
+module.exports = { getUsers, getUserById, createUser, updateUser, updateAvatar };
