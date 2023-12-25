@@ -1,31 +1,30 @@
 {
-  "name": "express-mesto",
+  "name": "project-13",
   "version": "1.0.0",
-  "description": "Бэкенд проекта Место. Учебный проект Яндекс.Практикума",
-  "main": "app.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ia-stepanov/express-mesto.git"
-  },
-  "keywords": [
-    "yandex-praktikum"
-  ],
-  "author": "Igor Stepanov",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "eslint": "^8.7.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4",
-    "nodemon": "^2.0.15"
-  },
   "dependencies": {
-    "body-parser": "^1.19.1",
-    "express": "^4.17.2",
-    "mongoose": "^6.1.7"
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.0.2"
   }
 }

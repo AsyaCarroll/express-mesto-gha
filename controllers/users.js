@@ -1,87 +1,96 @@
+const { Types } = require('mongoose');
 const User = require('../models/user');
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors');
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка по умолчанию' });
+  }
 };
 
-const getUser = (req, res) => {
+// eslint-disable-next-line consistent-return
+const getUserById = async (req, res) => {
   const { userId } = req.params;
 
-  return User.findById(userId)
-    .orFail(() => new Error('NotFound'))
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else if (err.message === 'NotFound') {
-        res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+  if (!Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: 'Передан некорректный идентификатор пользователя' });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка по умолчанию' });
+  }
 };
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const { name, about, avatar } = req.body;
-
-  return User.create({ name, about, avatar })
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+  try {
+    const user = await User.create({ name, about, avatar });
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
+  }
 };
 
-const updateProfile = (req, res) => {
+// eslint-disable-next-line consistent-return
+const updateUser = async (req, res) => {
   const { name, about } = req.body;
+  const userId = req.user._id;
 
-  return User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  ).orFail(() => new Error('NotFound'))
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-      } else if (err.message === 'NotFound') {
-        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+  try {
+    if (name && (name.length < 2 || name.length > 30)) {
+      return res.status(400).json({ message: 'Переданы некорректные данные при обновлении профиля' });
+    }
+
+    if (about && (about.length < 2 || about.length > 30)) {
+      return res.status(400).json({ message: 'Переданы некорректные данные при обновлении профиля' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, about },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Пользователь с указанным _id не найден' });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка по умолчанию' });
+  }
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = async (req, res) => {
   const { avatar } = req.body;
+  const userId = req.user._id;
 
-  return User.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    { new: true, runValidators: true },
-  ).orFail(() => new Error('NotFound'))
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара' });
-      } else if (err.message === 'NotFound') {
-        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { avatar },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      res.status(404).json({ message: 'Пользователь с указанным _id не найден' });
+      return;
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка по умолчанию' });
+  }
 };
 
 module.exports = {
-  getUsers,
-  getUser,
-  createUser,
-  updateProfile,
-  updateAvatar,
+  getUsers, getUserById, createUser, updateUser, updateAvatar,
 };
