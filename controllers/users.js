@@ -10,11 +10,14 @@ const getUsers = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line consistent-return
 const getUserById = async (req, res) => {
   const { userId } = req.params;
+
   if (!Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: 'Передан некорректный идентификатор пользователя' });
   }
+
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -36,24 +39,30 @@ const createUser = async (req, res) => {
   }
 };
 
+// eslint-disable-next-line consistent-return
 const updateUser = async (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
+
   try {
     if (name && (name.length < 2 || name.length > 30)) {
       return res.status(400).json({ message: 'Переданы некорректные данные при обновлении профиля' });
     }
+
     if (about && (about.length < 2 || about.length > 30)) {
       return res.status(400).json({ message: 'Переданы некорректные данные при обновлении профиля' });
     }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { name, about },
       { new: true },
-    )
+    );
+
     if (!updatedUser) {
-      return res.status(404).json({ message: 'Пользователь с указанным ID не найден' });
+      return res.status(404).json({ message: 'Пользователь с указанным _id не найден' });
     }
+
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json({ message: 'Ошибка по умолчанию' });
@@ -63,16 +72,19 @@ const updateUser = async (req, res) => {
 const updateAvatar = async (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
+
   try {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { avatar },
       { new: true },
-    )
+    );
+
     if (!updatedUser) {
-      res.status(404).json({ message: 'Пользователь с указанным ID не найден' });
+      res.status(404).json({ message: 'Пользователь с указанным _id не найден' });
       return;
     }
+
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json({ message: 'Ошибка по умолчанию' });
@@ -80,9 +92,5 @@ const updateAvatar = async (req, res) => {
 };
 
 module.exports = {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  updateAvatar,
+  getUsers, getUserById, createUser, updateUser, updateAvatar,
 };
