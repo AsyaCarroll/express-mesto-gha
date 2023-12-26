@@ -17,15 +17,14 @@ const getUserById = async (req, res) => {
   if (!Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: 'Передан некорректный идентификатор пользователя' });
   }
-
   try {
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'Пользователь не найден' });
     }
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Ошибка по умолчанию' });
+    return res.status(500).json({ message: 'Ошибка по умолчанию' });
   }
 };
 
@@ -36,9 +35,9 @@ const createUser = async (req, res) => {
     res.status(201).json(user);
   } catch (error) {
     if (error.name == 'ValidationError') {
-      res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
+      return res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
     } else {
-      res.status(500).json({ message: 'Ошибка по умолчанию' })
+      return res.status(500).json({ message: 'Ошибка по умолчанию' })
     }
 
   }
