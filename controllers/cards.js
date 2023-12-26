@@ -30,11 +30,9 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
 
-  // Проверка валидности ObjectId
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return handleErrorResponse(res, 'Переданы некорректные данные при создании карточки', 400);
   }
-
   Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
@@ -50,7 +48,6 @@ const deleteCard = (req, res) => {
 const likeCard = async (req, res) => {
   const { cardId } = req.params;
 
-  // Проверка валидности ObjectId
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return handleErrorResponse(res, 'Некорректный формат ID карточки', 400);
   }
@@ -76,7 +73,6 @@ const likeCard = async (req, res) => {
 const dislikeCard = async (req, res) => {
   const { cardId } = req.params;
 
-  // Проверка валидности ObjectId
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return handleErrorResponse(res, 'Некорректный формат ID карточки', 400);
   }
