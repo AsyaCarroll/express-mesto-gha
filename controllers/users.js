@@ -36,9 +36,9 @@ const createUser = async (req, res) => {
     res.status(201).json(user);
   } catch (error) {
     if (error.name == 'ValidationError') {
-      res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
+      return res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
     } else {
-      res.status(500).json({ message: 'Ошибка по умолчанию' });
+      return res.status(500).json({ message: 'Ошибка по умолчанию' });
     }
 
   }
