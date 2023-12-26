@@ -17,14 +17,15 @@ const getUserById = async (req, res) => {
   if (!Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: 'Передан некорректный идентификатор пользователя' });
   }
+
   try {
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'Пользователь не найден' });
     }
-    return res.status(200).json(user);
+    res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ message: 'Ошибка по умолчанию' });
+    res.status(500).json({ message: 'Ошибка по умолчанию' });
   }
 };
 
@@ -34,12 +35,7 @@ const createUser = async (req, res) => {
     const user = await User.create({ name, about, avatar });
     res.status(201).json(user);
   } catch (error) {
-    if (error.name == 'ValidationError') {
-      return res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
-    } else {
-      return res.status(500).json({ message: 'Ошибка по умолчанию' })
-    }
-
+    res.status(400).json({ message: 'Переданы некорректные данные при создании пользователя' });
   }
 };
 
@@ -60,7 +56,7 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { name, about },
-      { new: true, runValidators: true },
+      { new: true },
     );
 
     if (!updatedUser) {
@@ -81,7 +77,7 @@ const updateAvatar = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { avatar },
-      { new: true, runValidators: true },
+      { new: true },
     );
 
     if (!updatedUser) {
