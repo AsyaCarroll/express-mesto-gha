@@ -40,7 +40,6 @@ const createUser = async (req, res) => {
     } else {
       res.status(500).json({ message: 'Ошибка по умолчанию' });
     }
-
   }
 };
 
